@@ -66,8 +66,10 @@ function main() {
 //   find start day of that year and calculate how many time to plus and divide with 7 to get start day of that year
 function calculateStartYearDay(year) {
   let { year: baseYear, day } = baseDate;
+
   //   find round to calculate start date
   let yearRound = year - baseYear;
+
   // set startday with basevalue
   let times = days.indexOf(day);
   for (i = 0; i < yearRound; i++) {
@@ -75,6 +77,7 @@ function calculateStartYearDay(year) {
     times = times + (isLeapYear(baseYear + i) ? 2 : 1);
   }
   times = times % 7;
+
   // this will return index of day 0 => monday
   console.log("times :", times);
   return times;
@@ -84,27 +87,40 @@ function calculateStartYearDay(year) {
 function findDay(date, startday, month, year) {
   let monthIndex = getMonthIndex(month);
   console.log("startday :", startday);
+
   // data to stack of day that pass in year
   let _day = 0;
+
   // month loob and then when it match that month will plus date
   for (i = 0; i <= monthIndex; i++) {
     console.log("i : ", i);
     console.log("day is :", _day);
+
     if (i == monthIndex) {
-      console.log("day is :", _day);
+      //   checkdate error
+      if (checkdateError(Number(date), month, year)) {
+        throw new Error("date not valid");
+      }
       // -1 because we delete the first day of year that we already calculate to startday
       // startday it remember of start day of that year
       let totalDay = (Number(date) + _day - 1 + startday) % 7;
       console.log("totalDay is :", totalDay);
+
       return totalDay;
-    } else if (thirtyMonth.indexOf(i + 1) !== -1) {
+    }
+    // plus 30 event month
+    else if (thirtyMonth.indexOf(i + 1) !== -1) {
       console.log("thirty month");
       _day = _day + 30;
-    } else if (i + 1 == 2) {
+    }
+    // plus 28,29 month
+    else if (i + 1 == 2) {
       console.log("month 2");
       plusLeap = isLeapYear(year) ? 29 : 28;
       _day = _day + plusLeap;
-    } else {
+    }
+    // plus 30 event month
+    else {
       console.log("thirty one month");
       _day = _day + 31;
     }
@@ -142,5 +158,30 @@ function isLeapYear(year) {
   // it not leap year
   else {
     return false;
+  }
+}
+
+function checkdateError(date, month, year) {
+  let maxLength;
+  if (thirtyMonth.indexOf !== -1) {
+    maxLength = 30;
+    if (0 > date > 30) {
+      return false;
+    }
+    return true;
+  } else if (months.indexOf(month) + 1 === 2) {
+    maxLength = isLeapYear(year) ? 29 : 28;
+    if (0 > date > maxLength) {
+      return false;
+    }
+    return true;
+  } else if (months.indexOf(month) !== -1) {
+    maxLength = 31;
+    if (0 > date > maxLength) {
+      return false;
+    }
+    return true;
+  } else {
+    return true;
   }
 }
